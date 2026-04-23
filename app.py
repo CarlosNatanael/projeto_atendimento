@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import zoneinfo
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///atendimentos.db'
 db = SQLAlchemy(app)
+
+def get_hora_brasil():
+    return datetime.now(zoneinfo.ZoneInfo('America/Sao_Paulo'))
 
 # Modelo do Banco de Dados
 class Atendimento(db.Model):
@@ -15,7 +19,7 @@ class Atendimento(db.Model):
     duvida = db.Column(db.Text)
     atendente = db.Column(db.String(50))
     assunto = db.Column(db.String(50))
-    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+    data_criacao = db.Column(db.DateTime, default=get_hora_brasil)
 
 with app.app_context():
     db.create_all()
