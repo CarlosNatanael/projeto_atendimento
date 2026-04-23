@@ -1,0 +1,242 @@
+:root {
+    --primary-color: #2c3e50;
+    --accent-color: #3498db;
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --border-color: #ddd;
+    --table-header-bg: #f8f9fa; /* Nova variável para o cabeçalho da tabela */
+}
+
+/* Definição das cores para o modo escuro */
+body.dark-mode {
+    --primary-color: #1a1a1a;
+    --accent-color: #2980b9;
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --border-color: #444; /* Borda mais suave no modo escuro */
+    --table-header-bg: #2a2a2a; /* Cabeçalho escuro para a tabela */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background 0.3s, color 0.3s;
+}
+
+.container {
+    width: 95%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Navbar Responsiva */
+.navbar {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+}
+
+.navbar .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+@media (min-width: 768px) {
+    .navbar .container {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.logo {
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    align-items: center; /* Alinha o botão de tema com os links */
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+}
+
+/* Botão do Tema */
+.theme-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+}
+
+/* Containers de Conteúdo */
+.form-container, .list-container {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+    color: var(--text-color);
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-color); /* Correção: Agora inverte junto com o texto padrão */
+    border-left: 5px solid var(--accent-color);
+    padding-left: 10px;
+}
+
+/* Formulário Adaptável */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+/* Correção: Unificamos as regras de inputs para evitar conflitos */
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color); /* Correção: Borda dinâmica */
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+/* Arruma a cor do placeholder no dark mode */
+input::placeholder, textarea::placeholder {
+    color: #888;
+}
+
+.btn-submit, .btn-search {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-submit:hover, .btn-search:hover {
+    background: #2980b9;
+}
+
+/* Busca Responsiva */
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 600px) {
+    .search-form {
+        flex-direction: row;
+    }
+    .search-form input {
+        flex: 1;
+    }
+}
+
+/* TABELA RESPONSIVA */
+@media (max-width: 768px) {
+    .data-table thead {
+        display: none;
+    }
+
+    .data-table, .data-table tbody, .data-table tr, .data-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .data-table tr {
+        margin-bottom: 15px;
+        border: 1px solid var(--border-color); /* Correção */
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--card-bg); /* Correção */
+    }
+
+    .data-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border-bottom: 1px solid var(--border-color); /* Correção */
+    }
+
+    .data-table td:last-child {
+        border-bottom: none;
+    }
+
+    .data-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        font-weight: bold;
+        text-align: left;
+        /* Correção: Rótulos do mobile também devem inverter */
+        color: var(--text-color); 
+    }
+}
+
+/* Estilo Desktop da Tabela */
+@media (min-width: 769px) {
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .data-table th, .data-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color); /* Correção */
+    }
+    .data-table th {
+        background-color: var(--table-header-bg); /* Correção: Fundo da tabela adaptável */
+    }
+}
+
+.footer {
+    text-align: center;
+    padding: 2rem;
+    color: #888;
+    font-size: 0.8rem;
+}

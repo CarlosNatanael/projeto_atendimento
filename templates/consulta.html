@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="list-container">
+    <h2>Consulta de Atendimentos</h2>
+
+    <form method="GET" action="/consulta" class="search-form">
+        <input type="text" name="search" placeholder="Pesquisar por nome, telefone ou produto..." value="{{ request.args.get('search', '') }}">
+        <button type="submit" class="btn-search">Buscar</button>
+    </form>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Dúvida</th>
+                <th>Atendente</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in atendimentos %}
+            <tr>
+                <td data-label="Data">{{ item.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td data-label="Cliente"><strong>{{ item.cliente }}</strong><br>{{ item.telefone }}</td>
+                <td data-label="Produto">{{ item.produto }}</td>
+                <td data-label="Dúvida">{{ item.duvida }}</td>
+                <td data-label="Atendente">{{ item.atendente }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center;">Nenhum registro encontrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
