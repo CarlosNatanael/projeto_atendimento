@@ -52,4 +52,4 @@ def consulta():
     return render_template('consulta.html', atendimentos=resultados)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")

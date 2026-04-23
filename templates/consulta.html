@@ -25,7 +25,13 @@
                 <td data-label="Data">{{ item.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
                 <td data-label="Cliente"><strong>{{ item.cliente }}</strong><br>{{ item.telefone }}</td>
                 <td data-label="Produto">{{ item.produto }}</td>
-                <td data-label="Dúvida">{{ item.duvida }}</td>
+                
+                <td data-label="Dúvida">
+                    {{ item.duvida[:40] }}{% if item.duvida|length > 40 %}...{% endif %}
+                    <br>
+                    <button class="btn-modal-open" data-fulltext="{{ item.duvida }}">Ler tudo</button>
+                </td>
+                
                 <td data-label="Atendente">{{ item.atendente }}</td>
             </tr>
             {% else %}
@@ -36,4 +42,39 @@
         </tbody>
     </table>
 </div>
+
+<div id="textModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Descrição da Dúvida</h3>
+        <p id="modal-text"></p> </div>
+</div>
+
+<script>
+    const modal = document.getElementById("textModal");
+    const modalText = document.getElementById("modal-text");
+    const closeBtn = document.querySelector(".close-modal");
+    const openBtns = document.querySelectorAll(".btn-modal-open");
+
+    // Para cada botão "Ler tudo", adiciona o evento de clique
+    openBtns.forEach(btn => {
+        btn.addEventListener("click", function() {
+            // Pega o texto que guardamos no HTML e joga no parágrafo do Modal
+            modalText.textContent = this.getAttribute("data-fulltext");
+            modal.style.display = "block";
+        });
+    });
+
+    // Clicar no X fecha
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Clicar no fundo escuro fora da caixa também fecha
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
 {% endblock %}
