@@ -14,6 +14,7 @@ class Atendimento(db.Model):
     produto = db.Column(db.String(100))
     duvida = db.Column(db.Text)
     atendente = db.Column(db.String(50))
+    assunto = db.Column(db.String(50))
     data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
@@ -26,6 +27,7 @@ def entrada():
             cliente=request.form['cliente'],
             telefone=request.form['telefone'],
             produto=request.form['produto'],
+            assunto=request.form['assunto'],
             duvida=request.form['duvida'],
             atendente=request.form['atendente']
         )
