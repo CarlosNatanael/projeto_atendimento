@@ -38,6 +38,7 @@
             <label>Origem do Atendimento:</label>
             <select name="origem" required>
                 <option value="" disabled {% if not atendimento %}selected{% endif %}>Selecione a origem...</option>
+                <option value="Telefone" {% if atendimento and atendimento.origem == 'Telefone' %}selected{% endif %}>Telefone</option>
                 <option value="WhatsApp" {% if atendimento and atendimento.origem == 'WhatsApp' %}selected{% endif %}>WhatsApp</option>
                 <option value="Ticket" {% if atendimento and atendimento.origem == 'Ticket' %}selected{% endif %}>Ticket</option>
                 <option value="Jimmy" {% if atendimento and atendimento.origem == 'Jimmy' %}selected{% endif %}>Jimmy</option>
