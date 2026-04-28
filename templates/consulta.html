@@ -6,9 +6,15 @@
 
     <form method="GET" action="/consulta" class="search-form">
         <input type="text" name="search" placeholder="Pesquisar por nome, telefone ou produto..." value="{{ request.args.get('search', '') }}">
+        
+        <select name="assunto">
+            <option value="">Todos os Assuntos</option>
+            <option value="Automação" {% if request.args.get('assunto') == 'Automação' %}selected{% endif %}>Automação</option>
+            <option value="Áudio" {% if request.args.get('assunto') == 'Áudio' %}selected{% endif %}>Áudio</option>
+        </select>
+
         <button type="submit" class="btn-search">Buscar</button>
     </form>
-
     <table class="data-table">
         <thead>
             <tr>

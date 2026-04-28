@@ -425,3 +425,16 @@ input::placeholder, textarea::placeholder {
 .btn-back:hover {
     background: #7f8c8d; /* Fica um pouco mais escuro ao passar o mouse */
 }
+
+@media (min-width: 600px) {
+    .search-form {
+        flex-direction: row;
+    }
+    .search-form input {
+        flex: 2; /* A barra de texto fica maior */
+    }
+    .search-form select {
+        flex: 1; /* O dropdown fica proporcional */
+        width: auto;
+    }
+}

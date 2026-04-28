@@ -29,15 +29,21 @@ with app.app_context():
 @app.route('/consulta')
 def consulta():
     search = request.args.get('search', '')
-    # Busca flexível por nome, telefone ou produto
+    assunto_filtro = request.args.get('assunto', '')
+
+    query = Atendimento.query
+
     if search:
-        resultados = Atendimento.query.filter(
+        query = query.filter(
             (Atendimento.cliente.contains(search)) | 
             (Atendimento.telefone.contains(search)) | 
             (Atendimento.produto.contains(search))
-        ).all()
-    else:
-        resultados = Atendimento.query.all()
+        )
+
+    if assunto_filtro:
+        query = query.filter(Atendimento.assunto == assunto_filtro)
+
+    resultados = query.all()
     
     return render_template('consulta.html', atendimentos=resultados)
 
