@@ -3,7 +3,7 @@
 {% block content %}
 <div class="form-container">
     <h2>Registrar Atendimento</h2>
-    <form method="POST" onsubmit="return confirm('{% if atendimento %}Tem certeza que deseja salvar as alterações neste atendimento?{% else %}Tem certeza que deseja salvar este novo registro?{% endif %}');">
+    <form method="POST">
         <div class="form-group">
             <label>Nome/Cliente:</label>
             <input type="text" name="cliente" required placeholder="Ex: Carlos Silva" value="{{ atendimento.cliente if atendimento else '' }}">
