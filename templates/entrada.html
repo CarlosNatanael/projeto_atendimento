@@ -3,58 +3,65 @@
 {% block content %}
 <div class="form-container">
     <h2>Registrar Atendimento</h2>
-    <form method="POST">
+    <form method="POST" onsubmit="return confirm('{% if atendimento %}Tem certeza que deseja salvar as alterações neste atendimento?{% else %}Tem certeza que deseja salvar este novo registro?{% endif %}');">
         <div class="form-group">
             <label>Nome/Cliente:</label>
-            <input type="text" name="cliente" required placeholder="Ex: Carlos Silva">
+            <input type="text" name="cliente" required placeholder="Ex: Carlos Silva" value="{{ atendimento.cliente if atendimento else '' }}">
         </div>
-        
+
         <div class="form-group">
             <label>Telefone/Celular:</label>
-            <input type="text" name="telefone" required placeholder="(11) 99999-9999">
+            <input type="text" name="telefone" required placeholder="(11) 99999-9999" value="{{ atendimento.telefone if atendimento else '' }}">
         </div>
 
         <div class="form-group">
             <label>Produto:</label>
-            <input type="text" name="produto" required placeholder="Ex: Impressora TP-650">
+            <input type="text" name="produto" required placeholder="Ex: Impressora TP-650" value="{{ atendimento.produto if atendimento else '' }}">
         </div>
 
         <div class="form-group">
             <label>Assunto:</label>
             <select name="assunto" required>
-                <option value="" disabled selected>Selecione o assunto...</option>
-                <option value="Automação">Automação</option>
-                <option value="Áudio">Áudio</option>
+                <option value="" disabled {% if not atendimento %}selected{% endif %}>Selecione o assunto...</option>
+                <option value="Automação" {% if atendimento and atendimento.assunto == 'Automação' %}selected{% endif %}>Automação</option>
+                <option value="Áudio" {% if atendimento and atendimento.assunto == 'Áudio' %}selected{% endif %}>Áudio</option>
             </select>
         </div>
-        
+
         <div class="form-group">
             <label>Origem do Atendimento:</label>
             <select name="origem" required>
-                <option value="" disabled {{ 'selected' if not atendimento }}>Selecione a origem...</option>
-                <option value="WhatsApp" {{ 'selected' if atendimento and atendimento.origem == 'WhatsApp' }}>WhatsApp</option>
-                <option value="Ticket" {{ 'selected' if atendimento and atendimento.origem == 'Ticket' }}>Ticket</option>
-                <option value="Jimmy" {{ 'selected' if atendimento and atendimento.origem == 'Jimmy' }}>Jimmy</option>
+                <option value="" disabled {% if not atendimento %}selected{% endif %}>Selecione a origem...</option>
+                <option value="WhatsApp" {% if atendimento and atendimento.origem == 'WhatsApp' %}selected{% endif %}>WhatsApp</option>
+                <option value="Ticket" {% if atendimento and atendimento.origem == 'Ticket' %}selected{% endif %}>Ticket</option>
+                <option value="Jimmy" {% if atendimento and atendimento.origem == 'Jimmy' %}selected{% endif %}>Jimmy</option>
             </select>
         </div>
 
         <div class="form-group">
             <label>Dúvida:</label>
-            <textarea name="duvida" rows="4" required></textarea>
+            <textarea name="duvida" rows="4" required>{{ atendimento.duvida if atendimento else '' }}</textarea>
         </div>
 
-
         <div class="form-group">
-            <label>Atendido por:</label>
-            <select name="atendente" required>
-                <option value="" disabled selected>Selecione o atendente</option>
+            <label>Atendido por (Não editável):</label>
+            <select name="atendente" {% if atendimento %}disabled{% else %}required{% endif %}>
+                <option value="" disabled {% if not atendimento %}selected{% endif %}>Selecione o atendente</option>
                 {% for atendente in atendentes %}
-                <option value="{{ atendente }}">{{ atendente }}</option>
+                <option value="{{ atendente }}" {% if atendimento and atendimento.atendente == atendente %}selected{% endif %}>{{ atendente }}</option>
                 {% endfor %}
             </select>
         </div>
 
-        <button type="submit" class="btn-submit">Salvar Registro</button>
+    <div class="botoes-container">
+            <button type="submit" class="btn-submit">
+                {% if atendimento %}Salvar Alterações{% else %}Salvar Registro{% endif %}
+            </button>
+
+            {% if atendimento %}
+                <a href="/consulta" class="btn-back">Voltar</a>
+            {% endif %}
+        </div>
     </form>
 </div>
 {% endblock %}

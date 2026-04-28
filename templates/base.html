@@ -6,6 +6,7 @@
     <title>Sistema de Atendimento</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='processor.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <nav class="navbar">
@@ -28,7 +29,11 @@
     </main>
 
     <footer class="footer">
-        <p>&copy; 2026 - Controle de Atendimentos</p>
+        <p>&copy;Controle de Atendimentos | 
+            <a href="https://github.com/carlosnatanael" target="_blank" style="color: inherit; text-decoration: none;">
+                <i class="bi bi-github"></i> carlosnatanael
+            </a>
+        </p>
     </footer>
     <script>
         const btn = document.getElementById("theme-toggle");

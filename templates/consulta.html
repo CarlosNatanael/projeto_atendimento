@@ -35,7 +35,7 @@
                 </td>
                 
                 <td data-label="Atendente">{{ item.atendente }}
-                    <a href="/editar/{{ item.id }}" class="btn-modal-open" style="text-decoration: none; color: #3498db;">✏️ Editar</a>
+                    <a href="/editar/{{ item.id }}" class="btn-modal-open" style="text-decoration: none; color: #3498db;" onclick="return confirm('Deseja abrir este registro para edição?');">✏️ Editar</a>
                 </td>
             </tr>
             {% else %}
@@ -64,7 +64,12 @@
     openBtns.forEach(btn => {
         btn.addEventListener("click", function() {
             const texto = this.getAttribute("data-fulltext");
-            const origem = this.getAttribute("data-origem");
+            let origem = this.getAttribute("data-origem");
+            
+            // Interceta valores nulos originários da base de dados antiga
+            if (!origem || origem === "None" || origem === "null" || origem.trim() === "") {
+                origem = "Não Informada (Registo Antigo)";
+            }
             
             // Exibe a dúvida e a origem no modal
             modalText.innerHTML = `<strong>Origem:</strong> ${origem}<br><br>${texto}`;

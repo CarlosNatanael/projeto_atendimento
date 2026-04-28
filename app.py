@@ -25,25 +25,6 @@ class Atendimento(db.Model):
 with app.app_context():
     db.create_all()
 
-@app.route('/', methods=['GET', 'POST'])
-def entrada():
-    if request.method == 'POST':
-        novo_atendimento = Atendimento(
-            cliente=request.form['cliente'],
-            telefone=request.form['telefone'],
-            produto=request.form['produto'],
-            assunto=request.form['assunto'],
-            duvida=request.form['duvida'],
-            atendente=request.form['atendente'],
-            origem=request.form['origem']
-        )
-        db.session.add(novo_atendimento)
-        db.session.commit()
-        return redirect('/consulta')
-    
-    atendentes = ["Carlos", "Celso", "Lucas"]
-    return render_template('entrada.html', atendentes=atendentes)
-
 @app.route('/consulta')
 def consulta():
     search = request.args.get('search', '')
@@ -59,7 +40,30 @@ def consulta():
     
     return render_template('consulta.html', atendimentos=resultados)
 
-# Rota para edição
+@app.route('/', methods=['GET', 'POST'])
+def entrada():
+    if request.method == 'POST':
+        # Captura com segurança: se vier vazio/nulo, atribui uma string válida
+        origem_recebida = request.form.get('origem')
+        if not origem_recebida:
+            origem_recebida = "Não Informada"
+
+        novo_atendimento = Atendimento(
+            cliente=request.form['cliente'],
+            telefone=request.form['telefone'],
+            produto=request.form['produto'],
+            assunto=request.form['assunto'],
+            duvida=request.form['duvida'],
+            atendente=request.form['atendente'],
+            origem=origem_recebida
+        )
+        db.session.add(novo_atendimento)
+        db.session.commit()
+        return redirect('/consulta')
+    
+    atendentes = ["Carlos", "Celso", "Lucas"]
+    return render_template('entrada.html', atendentes=atendentes)
+
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar(id):
     atendimento = Atendimento.query.get_or_404(id)
@@ -69,8 +73,14 @@ def editar(id):
         atendimento.produto = request.form['produto']
         atendimento.assunto = request.form['assunto']
         atendimento.duvida = request.form['duvida']
-        atendimento.atendente = request.form['atendente']
-        atendimento.origem = request.form['origem']
+        
+        # Atualiza a origem se ela vier no formulário. Se for um registo antigo nulo, corrige-o.
+        origem_recebida = request.form.get('origem')
+        if origem_recebida:
+            atendimento.origem = origem_recebida
+        elif not atendimento.origem:
+            atendimento.origem = "Não Informada"
+            
         db.session.commit()
         return redirect('/consulta')
     

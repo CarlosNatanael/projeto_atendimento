@@ -343,3 +343,85 @@ input::placeholder, textarea::placeholder {
 .badge-automacao {
     background-color: #27ae60;
 }
+
+.btn-back {
+    display: inline-block;
+    background: #95a5a6; /* Cor cinza neutra */
+    color: white;
+    text-decoration: none;
+    padding: 14px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+    width: 100%;
+    transition: background 0.3s;
+}
+
+.btn-back:hover {
+    background: #7f8c8d;
+}
+
+/* Organiza os botões lado a lado */
+.form-actions {
+    display: flex;
+    gap: 15px; /* Espaço entre os botões */
+    margin-top: 10px;
+}
+
+/* Faz o botão de salvar ocupar o espaço restante ou dividir igualmente */
+.btn-submit {
+    flex: 1; 
+}
+
+/* Estilo do botão de voltar ajustado */
+.btn-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #95a5a6;
+    color: white;
+    text-decoration: none;
+    padding: 14px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s;
+    white-space: nowrap; /* Impede que o texto quebre em duas linhas */
+}
+
+.btn-back:hover {
+    background: #7f8c8d;
+}
+
+/* --- ALINHAMENTO DOS BOTÕES DE AÇÃO --- */
+.botoes-container {
+    display: flex;
+    gap: 15px; /* Espaço entre os botões */
+    margin-top: 15px;
+    width: 100%;
+}
+
+/* O flex: 1 faz com que os dois botões dividam o espaço meio a meio */
+.btn-submit {
+    flex: 1;
+    /* Suas outras configurações de cor/fundo do btn-submit continuam valendo */
+}
+
+.btn-back {
+    flex: 1; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #95a5a6; /* Cor cinza neutra */
+    color: white;
+    text-decoration: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-back:hover {
+    background: #7f8c8d; /* Fica um pouco mais escuro ao passar o mouse */
+}
