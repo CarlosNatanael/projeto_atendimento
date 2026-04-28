@@ -5,6 +5,12 @@
     <h2>Registrar Atendimento</h2>
     <form method="POST">
         <div class="form-group">
+            <label>Data do Atendimento:</label>
+            <input type="date" name="data_atendimento" required 
+                   value="{{ atendimento.data_atendimento if atendimento else hoje }}">
+        </div>
+        
+        <div class="form-group">
             <label>Nome/Cliente:</label>
             <input type="text" name="cliente" required placeholder="Ex: Carlos Silva" value="{{ atendimento.cliente if atendimento else '' }}">
         </div>

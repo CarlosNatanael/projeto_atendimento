@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, date
 import zoneinfo
 
 app = Flask(__name__)
@@ -21,6 +21,7 @@ class Atendimento(db.Model):
     assunto = db.Column(db.String(50))
     origem = db.Column(db.String(30))
     data_criacao = db.Column(db.DateTime, default=get_hora_brasil)
+    data_atendimento = db.Column(db.Date)
 
 with app.app_context():
     db.create_all()
@@ -43,10 +44,14 @@ def consulta():
 @app.route('/', methods=['GET', 'POST'])
 def entrada():
     if request.method == 'POST':
-        # Captura com segurança: se vier vazio/nulo, atribui uma string válida
         origem_recebida = request.form.get('origem')
         if not origem_recebida:
             origem_recebida = "Não Informada"
+        data_atendimento_str = request.form.get('data_atendimento')
+        if data_atendimento_str:
+            data_formatada = datetime.strptime(data_atendimento_str, '%Y-%m-%d').date()
+        else:
+            data_formatada = get_hora_brasil().date()
 
         novo_atendimento = Atendimento(
             cliente=request.form['cliente'],
@@ -55,14 +60,16 @@ def entrada():
             assunto=request.form['assunto'],
             duvida=request.form['duvida'],
             atendente=request.form['atendente'],
-            origem=origem_recebida
+            origem=origem_recebida,
+            data_atendimento=data_formatada
         )
         db.session.add(novo_atendimento)
         db.session.commit()
         return redirect('/consulta')
     
     atendentes = ["Carlos", "Celso", "Lucas"]
-    return render_template('entrada.html', atendentes=atendentes)
+    hoje = get_hora_brasil().strftime('%Y-%m-%d')
+    return render_template('entrada.html', atendentes=atendentes, hoje=hoje)
 
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar(id):
@@ -74,12 +81,15 @@ def editar(id):
         atendimento.assunto = request.form['assunto']
         atendimento.duvida = request.form['duvida']
         
-        # Atualiza a origem se ela vier no formulário. Se for um registo antigo nulo, corrige-o.
         origem_recebida = request.form.get('origem')
         if origem_recebida:
             atendimento.origem = origem_recebida
         elif not atendimento.origem:
             atendimento.origem = "Não Informada"
+
+        data_atendimento_str = request.form.get('data_atendimento')
+        if data_atendimento_str:
+            atendimento.data_atendimento = datetime.strptime(data_atendimento_str, '%Y-%m-%d').date()
             
         db.session.commit()
         return redirect('/consulta')

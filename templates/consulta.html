@@ -22,18 +22,29 @@
         <tbody>
             {% for item in atendimentos %}
             <tr>
-                <td data-label="Data">{{ item.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td data-label="Data">
+                    {% if item.data_atendimento %}
+                        {{ item.data_atendimento.strftime('%d/%m/%Y') }}
+                    {% else %}
+                        {{ item.data_criacao.strftime('%d/%m/%Y') }}
+                    {% endif %}
+                </td>
                 <td data-label="Cliente"><strong>{{ item.cliente }}</strong><br>{{ item.telefone }}</td>
                 <td data-label="Produto">{{ item.produto }}</td>
-                
+
                 <td data-label="Dúvida">
                     <span class="badge badge-{{ item.assunto | lower | replace('á', 'a') | replace('ç', 'c') | replace('ã', 'a') }}">
                         {{ item.assunto }}
                     </span>
                     <br>
-                    <button class="btn-modal-open" data-fulltext="{{ item.duvida }}" data-origem="{{ item.origem }}">Ler tudo</button>
+                    <button class="btn-modal-open" 
+                            data-fulltext="{{ item.duvida }}" 
+                            data-origem="{{ item.origem }}"
+                            data-atendimento="{% if item.data_atendimento %}{{ item.data_atendimento.strftime('%d/%m/%Y') }}{% else %}{{ item.data_criacao.strftime('%d/%m/%Y') }}{% endif %}">
+                        Ler tudo
+                    </button>
                 </td>
-                
+
                 <td data-label="Atendente">{{ item.atendente }}
                     <a href="/editar/{{ item.id }}" class="btn-modal-open" style="text-decoration: none; color: #3498db;" onclick="return confirm('Deseja abrir este registro para edição?');">✏️ Editar</a>
                 </td>
@@ -60,28 +71,23 @@
     const closeBtn = document.querySelector(".close-modal");
     const openBtns = document.querySelectorAll(".btn-modal-open");
 
-    // Para cada botão "Ler tudo", adiciona o evento de clique
     openBtns.forEach(btn => {
         btn.addEventListener("click", function() {
             const texto = this.getAttribute("data-fulltext");
+            const dataAtend = this.getAttribute("data-atendimento");
             let origem = this.getAttribute("data-origem");
             
-            // Interceta valores nulos originários da base de dados antiga
             if (!origem || origem === "None" || origem === "null" || origem.trim() === "") {
                 origem = "Não Informada (Registo Antigo)";
             }
             
-            // Exibe a dúvida e a origem no modal
-            modalText.innerHTML = `<strong>Origem:</strong> ${origem}<br><br>${texto}`;
+            modalText.innerHTML = `<strong>Data:</strong> ${dataAtend}<br><strong>Origem:</strong> ${origem}<br><br>${texto}`;
             modal.style.display = "block";
         });
     });
-    // Clicar no X fecha
     closeBtn.onclick = function() {
         modal.style.display = "none";
     }
-
-    // Clicar no fundo escuro fora da caixa também fecha
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
