@@ -34,7 +34,9 @@
                     <button class="btn-modal-open" data-fulltext="{{ item.duvida }}">Ler tudo</button>
                 </td>
                 
-                <td data-label="Atendente">{{ item.atendente }}</td>
+                <td data-label="Atendente">{{ item.atendente }}
+                    <a href="/editar/{{ item.id }}" class="btn-modal-open" style="text-decoration: none; color: #3498db;">✏️ Editar</a>
+                </td>
             </tr>
             {% else %}
             <tr>
@@ -61,12 +63,14 @@
     // Para cada botão "Ler tudo", adiciona o evento de clique
     openBtns.forEach(btn => {
         btn.addEventListener("click", function() {
-            // Pega o texto que guardamos no HTML e joga no parágrafo do Modal
-            modalText.textContent = this.getAttribute("data-fulltext");
+            const texto = this.getAttribute("data-fulltext");
+            const origem = this.getAttribute("data-origem");
+            
+            // Exibe a dúvida e a origem no modal
+            modalText.innerHTML = `<strong>Origem:</strong> ${origem}<br><br>${texto}`;
             modal.style.display = "block";
         });
     });
-
     // Clicar no X fecha
     closeBtn.onclick = function() {
         modal.style.display = "none";

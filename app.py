@@ -19,6 +19,7 @@ class Atendimento(db.Model):
     duvida = db.Column(db.Text)
     atendente = db.Column(db.String(50))
     assunto = db.Column(db.String(50))
+    origem = db.Column(db.String(30))
     data_criacao = db.Column(db.DateTime, default=get_hora_brasil)
 
 with app.app_context():
@@ -33,13 +34,14 @@ def entrada():
             produto=request.form['produto'],
             assunto=request.form['assunto'],
             duvida=request.form['duvida'],
-            atendente=request.form['atendente']
+            atendente=request.form['atendente'],
+            origem=request.form['origem']
         )
         db.session.add(novo_atendimento)
         db.session.commit()
         return redirect('/consulta')
     
-    atendentes = ["Carlos", "Celso", "Lucas"] # Lista para o Select
+    atendentes = ["Carlos", "Celso", "Lucas"]
     return render_template('entrada.html', atendentes=atendentes)
 
 @app.route('/consulta')
@@ -56,6 +58,24 @@ def consulta():
         resultados = Atendimento.query.all()
     
     return render_template('consulta.html', atendimentos=resultados)
+
+# Rota para edição
+@app.route('/editar/<int:id>', methods=['GET', 'POST'])
+def editar(id):
+    atendimento = Atendimento.query.get_or_404(id)
+    if request.method == 'POST':
+        atendimento.cliente = request.form['cliente']
+        atendimento.telefone = request.form['telefone']
+        atendimento.produto = request.form['produto']
+        atendimento.assunto = request.form['assunto']
+        atendimento.duvida = request.form['duvida']
+        atendimento.atendente = request.form['atendente']
+        atendimento.origem = request.form['origem']
+        db.session.commit()
+        return redirect('/consulta')
+    
+    atendentes = ["Carlos", "Celso", "Lucas"]
+    return render_template('entrada.html', atendentes=atendentes, atendimento=atendimento)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
