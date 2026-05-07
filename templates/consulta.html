@@ -4,17 +4,41 @@
 <div class="list-container">
     <h2>Consulta de Atendimentos</h2>
 
-    <form method="GET" action="/consulta" class="search-form">
-        <input type="text" name="search" placeholder="Pesquisar por nome, telefone ou produto..." value="{{ request.args.get('search', '') }}">
-        
-        <select name="assunto">
-            <option value="">Todos os Assuntos</option>
-            <option value="Automação" {% if request.args.get('assunto') == 'Automação' %}selected{% endif %}>Automação</option>
-            <option value="Áudio" {% if request.args.get('assunto') == 'Áudio' %}selected{% endif %}>Áudio</option>
-        </select>
+    <button type="button" class="accordion-btn" id="toggleSearchBtn">
+        <span>🔍 Pesquisa e Filtros</span>
+        <span id="accordion-icon">▼</span>
+    </button>
 
-        <button type="submit" class="btn-search">Buscar</button>
-    </form>
+    <div class="accordion-wrapper" id="searchWrapper">
+        <div class="accordion-inner">
+            <form method="GET" action="/consulta" class="search-form-clean">
+                <div class="search-row">
+                    <input type="text" name="search" placeholder="Pesquisar por nome, telefone ou produto..." value="{{ request.args.get('search', '') }}">
+                    <button type="submit" class="btn-search">Buscar</button>
+                </div>
+                
+                <div class="filter-row">
+                    <select name="assunto">
+                        <option value="">Todos os Assuntos</option>
+                        <option value="Automação" {% if request.args.get('assunto') == 'Automação' %}selected{% endif %}>Automação</option>
+                        <option value="Áudio" {% if request.args.get('assunto') == 'Áudio' %}selected{% endif %}>Áudio</option>
+                    </select>
+
+                    <select name="atendente">
+                        <option value="">Todos os Atendentes</option>
+                        {% for at in atendentes %}
+                        <option value="{{ at }}" {% if request.args.get('atendente') == at %}selected{% endif %}>{{ at }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label class="checkbox-toggle">
+                        <input type="checkbox" name="hoje" value="1" onchange="this.form.submit()" {% if request.args.get('hoje') == '1' %}checked{% endif %}>
+                        <span>Somente Hoje</span>
+                    </label>
+                </div>
+            </form>
+        </div>
+    </div>
     <table class="data-table">
         <thead>
             <tr>
@@ -51,8 +75,9 @@
                     </button>
                 </td>
 
-                <td data-label="Atendente">{{ item.atendente }}
-                    <a href="/editar/{{ item.id }}" class="btn-modal-open" style="text-decoration: none; color: #3498db;" onclick="return confirm('Deseja abrir este registro para edição?');">✏️ Editar</a>
+                <td data-label="Atendente">
+                    <strong>{{ item.atendente }}</strong><br>
+                    <a href="/editar/{{ item.id }}" class="btn-modal-open" style="text-decoration: none; margin-top: 5px; display: inline-block;" onclick="return confirm('Deseja abrir este registro para edição?');">✏️ Editar</a>
                 </td>
             </tr>
             {% else %}
@@ -68,36 +93,82 @@
     <div class="modal-content">
         <span class="close-modal">&times;</span>
         <h3>Descrição da Dúvida</h3>
-        <p id="modal-text"></p> </div>
+        <p id="modal-text"></p>
+    </div>
 </div>
 
 <script>
-    const modal = document.getElementById("textModal");
-    const modalText = document.getElementById("modal-text");
-    const closeBtn = document.querySelector(".close-modal");
-    const openBtns = document.querySelectorAll(".btn-modal-open");
+    // Aguarda o DOM carregar completamente
+    document.addEventListener('DOMContentLoaded', function() {
+        // ========== MODAL ==========
+        const modal = document.getElementById("textModal");
+        const modalText = document.getElementById("modal-text");
+        const closeBtn = document.querySelector(".close-modal");
+        const openBtns = document.querySelectorAll(".btn-modal-open");
 
-    openBtns.forEach(btn => {
-        btn.addEventListener("click", function() {
-            const texto = this.getAttribute("data-fulltext");
-            const dataAtend = this.getAttribute("data-atendimento");
-            let origem = this.getAttribute("data-origem");
+        if (openBtns.length > 0) {
+            openBtns.forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const texto = this.getAttribute("data-fulltext");
+                    const dataAtend = this.getAttribute("data-atendimento");
+                    let origem = this.getAttribute("data-origem");
+                    
+                    if (!origem || origem === "None" || origem === "null" || origem.trim() === "") {
+                        origem = "Não Informada (Registo Antigo)";
+                    }
+                    
+                    modalText.innerHTML = `<strong>Data:</strong> ${dataAtend}<br><strong>Origem:</strong> ${origem}<br><br>${texto}`;
+                    modal.style.display = "block";
+                });
+            });
             
-            if (!origem || origem === "None" || origem === "null" || origem.trim() === "") {
-                origem = "Não Informada (Registo Antigo)";
+            if (closeBtn) {
+                closeBtn.onclick = function() {
+                    modal.style.display = "none";
+                }
             }
             
-            modalText.innerHTML = `<strong>Data:</strong> ${dataAtend}<br><strong>Origem:</strong> ${origem}<br><br>${texto}`;
-            modal.style.display = "block";
-        });
-    });
-    closeBtn.onclick = function() {
-        modal.style.display = "none";
-    }
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
         }
-    }
+        
+        // ========== SANFONA (ACCORDION) ==========
+        const toggleBtn = document.getElementById('toggleSearchBtn');
+        const wrapper = document.getElementById('searchWrapper');
+        const icon = document.getElementById('accordion-icon');
+
+        if (toggleBtn && wrapper && icon) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasFilters = (urlParams.has('search') && urlParams.get('search') !== '') || 
+                               (urlParams.has('assunto') && urlParams.get('assunto') !== '') || 
+                               (urlParams.has('atendente') && urlParams.get('atendente') !== '') || 
+                               urlParams.has('hoje');
+
+            // Inicializa o estado da sanfona
+            if (hasFilters) {
+                wrapper.classList.add('open');
+                icon.textContent = '▲';
+            } else if (window.innerWidth <= 768) {
+                wrapper.classList.remove('open');
+                icon.textContent = '▼';
+            } else {
+                wrapper.classList.add('open');
+                icon.textContent = '▲';
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                wrapper.classList.toggle('open');
+                if (wrapper.classList.contains('open')) {
+                    icon.textContent = '▲';
+                } else {
+                    icon.textContent = '▼';
+                }
+            });
+        }
+    });
 </script>
 {% endblock %}

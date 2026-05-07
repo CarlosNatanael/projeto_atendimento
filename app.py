@@ -30,6 +30,8 @@ with app.app_context():
 def consulta():
     search = request.args.get('search', '')
     assunto_filtro = request.args.get('assunto', '')
+    atendente_filtro = request.args.get('atendente', '')
+    somente_hoje = request.args.get('hoje', '')
 
     query = Atendimento.query
 
@@ -43,10 +45,20 @@ def consulta():
     if assunto_filtro:
         query = query.filter(Atendimento.assunto == assunto_filtro)
 
+    if atendente_filtro:
+        query = query.filter(Atendimento.atendente == atendente_filtro)
+
+    if somente_hoje == '1':
+        hoje = get_hora_brasil().date()
+        query = query.filter(Atendimento.data_atendimento == hoje)
+
+    query = query.order_by(Atendimento.data_atendimento.desc(), Atendimento.id.desc())
+
     resultados = query.all()
     
-    return render_template('consulta.html', atendimentos=resultados)
-
+    atendentes = ["Carlos", "Celso", "Lucas"]
+    
+    return render_template('consulta.html', atendimentos=resultados, atendentes=atendentes)
 @app.route('/', methods=['GET', 'POST'])
 def entrada():
     if request.method == 'POST':
