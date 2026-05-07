@@ -557,3 +557,15 @@ input::placeholder, textarea::placeholder {
     margin-top: 5px;
     margin-bottom: 1.5rem;
 }
+
+/* Estilo do botão de editar na tabela */
+.btn-edit {
+    color: var(--accent-color);
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.btn-edit:hover {
+    color: var(--primary-color);
+}
