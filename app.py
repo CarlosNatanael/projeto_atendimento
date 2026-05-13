@@ -35,6 +35,7 @@ def consulta():
     assunto_filtro = request.args.get('assunto', '')
     atendente_filtro = request.args.get('atendente', '')
     somente_hoje = request.args.get('hoje', '')
+    somente_pendentes = request.args.get('pendente', '')
 
     query = Atendimento.query
 
@@ -54,6 +55,9 @@ def consulta():
     if somente_hoje == '1':
         hoje = get_hora_brasil().date()
         query = query.filter(Atendimento.data_atendimento == hoje)
+
+    if somente_pendentes == '1':
+        query = query.filter(Atendimento.status == 'Pendente')
 
     query = query.order_by(Atendimento.data_atendimento.desc(), Atendimento.id.desc())
 

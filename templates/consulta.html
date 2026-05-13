@@ -35,6 +35,10 @@
                         <input type="checkbox" name="hoje" value="1" onchange="this.form.submit()" {% if request.args.get('hoje') == '1' %}checked{% endif %}>
                         <span>Somente Hoje</span>
                     </label>
+                    <label class="checkbox-toggle" style="border-color: #e67e22;">
+                        <input type="checkbox" name="pendente" value="1" onchange="this.form.submit()" {% if request.args.get('pendente') == '1' %}checked{% endif %}>
+                        <span style="color: #e67e22; font-weight: bold;">Pendentes</span>
+                    </label>
                 </div>
             </form>
         </div>
@@ -171,7 +175,8 @@
             const hasFilters = (urlParams.has('search') && urlParams.get('search') !== '') || 
                                (urlParams.has('assunto') && urlParams.get('assunto') !== '') || 
                                (urlParams.has('atendente') && urlParams.get('atendente') !== '') || 
-                               urlParams.has('hoje');
+                               urlParams.has('hoje') || 
+                               urlParams.has('pendente');
 
             // Inicializa o estado da sanfona
             if (hasFilters) {
