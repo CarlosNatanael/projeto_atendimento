@@ -66,11 +66,17 @@
                     <span class="badge badge-{{ item.assunto | lower | replace('á', 'a') | replace('ç', 'c') | replace('ã', 'a') }}">
                         {{ item.assunto }}
                     </span>
+                    {% if item.status == 'Pendente' %}
+                        <span class="badge" style="background-color: #e67e22;">PENDENTE</span>
+                    {% endif %}
                     <br>
                     <button class="btn-modal-open" 
                             data-fulltext="{{ item.duvida }}" 
                             data-origem="{{ item.origem }}"
-                            data-atendimento="{% if item.data_atendimento %}{{ item.data_atendimento.strftime('%d/%m/%Y') }}{% else %}{{ item.data_criacao.strftime('%d/%m/%Y') }}{% endif %}">
+                            data-status="{{ item.status }}"
+                            data-motivo="{{ item.motivo_pendencia or '' }}"
+                            data-resposta="{{ item.resposta_final or '' }}"
+                            data-atendimento="...">
                         Ler tudo
                     </button>
                 </td>
@@ -110,15 +116,34 @@
             openBtns.forEach(btn => {
                 btn.addEventListener("click", function(e) {
                     e.preventDefault();
+                    
+                    // 1. Pega os atributos do botão clicado
                     const texto = this.getAttribute("data-fulltext");
                     const dataAtend = this.getAttribute("data-atendimento");
                     let origem = this.getAttribute("data-origem");
+                    const status = this.getAttribute("data-status");
+                    const motivo = this.getAttribute("data-motivo");
+                    const resposta = this.getAttribute("data-resposta");
                     
                     if (!origem || origem === "None" || origem === "null" || origem.trim() === "") {
                         origem = "Não Informada (Registo Antigo)";
                     }
                     
-                    modalText.innerHTML = `<strong>Data:</strong> ${dataAtend}<br><strong>Origem:</strong> ${origem}<br><br>${texto}`;
+                    // 2. Constrói o conteúdo dinâmico
+                    let conteudoModal = `<strong>Data:</strong> ${dataAtend}<br><strong>Origem:</strong> ${origem}<br><strong>Status:</strong> ${status || 'Concluído'}`;
+
+                    conteudoModal += `<br><hr style="margin: 15px 0; border-top: 1px solid var(--border-color);"><strong>Dúvida Inicial:</strong><br>${texto}<hr style="margin: 15px 0; border-top: 1px solid var(--border-color);">`;
+                    
+                    if (motivo) {
+                        conteudoModal += `<br><div style="color: #e67e22; border-left: 3px solid #e67e22; padding-left: 10px;"><strong>Histórico de Pendência:</strong><br>${motivo}</div>`;
+                    }
+                    
+                    if (resposta) {
+                        conteudoModal += `<br><div style="color: #27ae60; border-left: 3px solid #27ae60; padding-left: 10px;"><strong>Solução Final:</strong><br>${resposta}</div>`;
+                    }
+                    
+                    // 3. Insere no HTML e exibe
+                    modalText.innerHTML = conteudoModal;
                     modal.style.display = "block";
                 });
             });

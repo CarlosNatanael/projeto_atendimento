@@ -60,6 +60,43 @@
             </select>
         </div>
 
+        {% if not atendimento %}
+            <div class="form-group checkbox-toggle" style="width: fit-content; margin-bottom: 15px;">
+                <input type="checkbox" id="is_pendente" name="is_pendente" value="1">
+                <label for="is_pendente" style="margin: 0; cursor: pointer;">Marcar como Pendente</label>
+            </div>
+            <div class="form-group" id="div_motivo" style="display: none;">
+                <label>Motivo da Pendência:</label>
+                <textarea name="motivo_pendencia" id="motivo_pendencia" rows="2"></textarea>
+            </div>
+        {% else %}
+            {% if atendimento.status == 'Pendente' %}
+                <div class="form-group" style="background: rgba(230, 126, 34, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #e67e22;">
+                    <label>Status: <strong style="color: #e67e22;">Pendente</strong></label>
+                    <p style="margin-top: 5px; font-size: 0.9rem;"><strong>Pendente por:</strong> {{ atendimento.motivo_pendencia }}</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Resposta Final / Solução:</label>
+                    <textarea name="resposta_final" rows="3" placeholder="Descreva como o problema foi resolvido..."></textarea>
+                </div>
+
+                <div class="form-group checkbox-toggle" style="width: fit-content; margin-bottom: 15px; border-color: #27ae60;">
+                    <input type="checkbox" id="concluir" name="concluir" value="1">
+                    <label for="concluir" style="margin: 0; cursor: pointer; color: #27ae60; font-weight: bold;">✔ Concluir Atendimento</label>
+                </div>
+            {% else %}
+                <div class="form-group" style="background: rgba(39, 174, 96, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60;">
+                    <label>Status: <strong style="color: #27ae60;">Concluído ✔</strong></label>
+                    {% if atendimento.motivo_pendencia %}
+                        <p style="margin-top: 5px; font-size: 0.85rem; color: #666;"><strong>Antiga Pendência:</strong> {{ atendimento.motivo_pendencia }}</p>
+                        <hr style="margin: 8px 0; opacity: 0.2;">
+                        <p style="font-size: 0.9rem;"><strong>Solução:</strong> {{ atendimento.resposta_final }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endif %}
+
     <div class="botoes-container">
             <button type="submit" class="btn-submit">
                 {% if atendimento %}Salvar Alterações{% else %}Salvar Registro{% endif %}
@@ -71,4 +108,24 @@
         </div>
     </form>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkPendente = document.getElementById('is_pendente');
+        const divMotivo = document.getElementById('div_motivo');
+        const textMotivo = document.getElementById('motivo_pendencia');
+
+        if (checkPendente) {
+            checkPendente.addEventListener('change', function() {
+                if (this.checked) {
+                    divMotivo.style.display = 'block';
+                    textMotivo.setAttribute('required', 'required');
+                } else {
+                    divMotivo.style.display = 'none';
+                    textMotivo.removeAttribute('required');
+                    textMotivo.value = '';
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

@@ -20,6 +20,9 @@ class Atendimento(db.Model):
     atendente = db.Column(db.String(50))
     assunto = db.Column(db.String(50))
     origem = db.Column(db.String(30))
+    status = db.Column(db.String(20), default='Concluído')
+    motivo_pendencia = db.Column(db.Text)
+    resposta_final = db.Column(db.Text)
     data_criacao = db.Column(db.DateTime, default=get_hora_brasil)
     data_atendimento = db.Column(db.Date)
 
@@ -59,17 +62,17 @@ def consulta():
     atendentes = ["Carlos", "Celso", "Lucas"]
     
     return render_template('consulta.html', atendimentos=resultados, atendentes=atendentes)
+
 @app.route('/', methods=['GET', 'POST'])
 def entrada():
     if request.method == 'POST':
-        origem_recebida = request.form.get('origem')
-        if not origem_recebida:
-            origem_recebida = "Não Informada"
+        origem_recebida = request.form.get('origem', "Não Informada")
         data_atendimento_str = request.form.get('data_atendimento')
-        if data_atendimento_str:
-            data_formatada = datetime.strptime(data_atendimento_str, '%Y-%m-%d').date()
-        else:
-            data_formatada = get_hora_brasil().date()
+        data_formatada = datetime.strptime(data_atendimento_str, '%Y-%m-%d').date() if data_atendimento_str else get_hora_brasil().date()
+
+        is_pendente = request.form.get('is_pendente')
+        status = 'Pendente' if is_pendente else 'Concluído'
+        motivo = request.form.get('motivo_pendencia', '') if is_pendente else ''
 
         novo_atendimento = Atendimento(
             cliente=request.form['cliente'],
@@ -79,7 +82,9 @@ def entrada():
             duvida=request.form['duvida'],
             atendente=request.form['atendente'],
             origem=origem_recebida,
-            data_atendimento=data_formatada
+            data_atendimento=data_formatada,
+            status=status,
+            motivo_pendencia=motivo
         )
         db.session.add(novo_atendimento)
         db.session.commit()
@@ -98,16 +103,16 @@ def editar(id):
         atendimento.produto = request.form['produto']
         atendimento.assunto = request.form['assunto']
         atendimento.duvida = request.form['duvida']
-        
-        origem_recebida = request.form.get('origem')
-        if origem_recebida:
-            atendimento.origem = origem_recebida
-        elif not atendimento.origem:
-            atendimento.origem = "Não Informada"
+        atendimento.origem = request.form.get('origem', atendimento.origem or "Não Informada")
 
         data_atendimento_str = request.form.get('data_atendimento')
         if data_atendimento_str:
             atendimento.data_atendimento = datetime.strptime(data_atendimento_str, '%Y-%m-%d').date()
+            
+        atendimento.resposta_final = request.form.get('resposta_final', '')
+        
+        if request.form.get('concluir'):
+            atendimento.status = 'Concluído'
             
         db.session.commit()
         return redirect('/consulta')
