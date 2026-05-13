@@ -76,7 +76,7 @@
                             data-status="{{ item.status }}"
                             data-motivo="{{ item.motivo_pendencia or '' }}"
                             data-resposta="{{ item.resposta_final or '' }}"
-                            data-atendimento="...">
+                            data-atendimento="{% if item.data_atendimento %}{{ item.data_atendimento.strftime('%d/%m/%Y') }}{% else %}{{ item.data_criacao.strftime('%d/%m/%Y') }}{% endif %}">
                         Ler tudo
                     </button>
                 </td>
@@ -135,7 +135,7 @@
                     conteudoModal += `<br><hr style="margin: 15px 0; border-top: 1px solid var(--border-color);"><strong>Dúvida Inicial:</strong><br>${texto}<hr style="margin: 15px 0; border-top: 1px solid var(--border-color);">`;
                     
                     if (motivo) {
-                        conteudoModal += `<br><div style="color: #e67e22; border-left: 3px solid #e67e22; padding-left: 10px;"><strong>Histórico de Pendência:</strong><br>${motivo}</div>`;
+                        conteudoModal += `<br><div style="color: #e67e22; border-left: 3px solid #e67e22; padding-left: 10px;"><strong>Pendência:</strong><br>${motivo}</div>`;
                     }
                     
                     if (resposta) {
